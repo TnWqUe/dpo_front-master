@@ -1,0 +1,78 @@
+
+<mat-tab-group  (selectedTabChange)="onMatTabChange($event)">
+  <mat-tab label="Осциллограммы">
+    <main>
+      <section>
+        <h4>Выберите приставку СИ</h4>
+        <mat-button-toggle-group [(ngModel)]="fontStyle" aria-label="Font Style">
+          <mat-button-toggle value="1">-</mat-button-toggle>
+          <mat-button-toggle value="1000">м</mat-button-toggle>
+          <mat-button-toggle value="1000000">мк</mat-button-toggle>
+        </mat-button-toggle-group>
+        <div class="menu-raw" *ngFor="let row of datasource"
+             (click)="setCharts(row)"
+             [class.is-clicked]="row.clicked">
+          {{row.name}}
+        </div>
+      </section>
+      <div echarts [options]="scopeOptions" theme="macarons" class="custom-chart-1" (chartInit)="onChartScopeInit($event)"></div>
+    </main>
+  </mat-tab>
+  <mat-tab label="Действующие значения">
+    <main>
+      <section>
+        <h4>Выберите приставку СИ</h4>
+        <mat-button-toggle-group [(ngModel)]="fontStyle" aria-label="Font Style">
+          <mat-button-toggle value="1">-</mat-button-toggle>
+          <mat-button-toggle value="1000">м</mat-button-toggle>
+          <mat-button-toggle value="1000000">мк</mat-button-toggle>
+        </mat-button-toggle-group>
+        <div *ngFor="let row of datasource">
+          <div *ngIf="row.type === 'analog'"
+               class="menu-raw"
+               (click)="setRMS(row)"
+               [class.is-clicked]="row.clicked">
+            {{row.name}}
+          </div>
+        </div>
+      </section>
+      <div echarts [options]="options" theme="macarons" class="custom-chart-2" (chartInit)="onChartRMSInit($event)"></div>
+
+<div>
+        <table mat-table [dataSource]="DataSource"  class="mat-elevation-z8" *ngIf="DataSource.data.length > 0" class="custom-table">
+          <!--indexOfValues Column -->
+          <ng-container matColumnDef="time" >
+            <th mat-header-cell *matHeaderCellDef> time </th>
+            <td mat-cell *matCellDef="let element"> {{element.time}} </td>
+          </ng-container>
+
+          <ng-container matColumnDef="value" >
+            <th mat-header-cell *matHeaderCellDef> value </th>
+            <td mat-cell *matCellDef="let element"> {{element.value}} </td>
+          </ng-container>
+
+          <!-- Disclaimer column -->
+          <ng-container matColumnDef="disclaimer">
+            <td mat-cell *matFooterCellDef colspan="2" >
+              <p> Название выбранного тока - {{clickedName}}</p>
+              <p> Уставка = {{current[0]?.value}} А</p>
+              <p>Время начала КЗ = {{DataSource.data[0]?.time}} мс</p>
+              <p>Время окончания КЗ = {{DataSource.data[DataSource.data.length-1]?.time}} мс</p>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns" class="example-first-header-row"> </tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          <tr mat-footer-row *matFooterRowDef="['disclaimer']" class="example-second-footer-row"></tr>
+        </table>
+        <mat-paginator  [pageSizeOptions]="[5, 10, 15]"     class="custom-table"
+                        showFirstLastButtons
+                        aria-label="Select page of periodic elements">
+        </mat-paginator>
+  <div *ngIf="DataSource.data.length == 0 && clickedName.length !=0">По выбранному току {{clickedName}} нет короткого замыкания</div>
+      </div>
+
+        <!--   </div> -->
+    </main>
+       </mat-tab>
+
+     </mat-tab-group>
